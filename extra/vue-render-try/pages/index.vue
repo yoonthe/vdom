@@ -1,4 +1,4 @@
-<template>
+<!--- <template>
   <section class="container">
     <div>
       <app-logo/>
@@ -20,14 +20,40 @@
       </div>
     </div>
   </section>
-</template>
+</template> -->
 
 <script>
 import AppLogo from '~/components/AppLogo.vue'
 
 export default {
+  data() {
+    return {
+      items: ['item1', 'item2'],
+      test: false,
+    }
+  },
   components: {
     AppLogo
+  },
+  beforeUpdate() {
+    console.log('beforeUpdate',this.items);
+  },
+  render(h) {
+    console.log('render',this.items);
+    const div =h('div',[h('app-logo'),
+      h('ul',this.items.map(i => h('li',{key: i},i))),
+      h('button',{on: {click: this.itemChange}}, 'change')]);
+    return this.test ? h('div',{style: {background: '#F00'}}, [div]) : div;
+  },
+  methods: {
+    itemChange() {
+      this.items = ['item2', 'item1'];
+      this.test =true;
+      // setTimeout(() => {
+        this.items = ['item1', 'item2'];
+        this.test = false;
+      // },1);
+    }
   }
 }
 </script>
