@@ -1,0 +1,14 @@
+{
+  "name": "test.yoonthe",
+  "version": "0.0.1",
+  "description": "test works",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yoonthe",
+  "license": "ISC",
+  "devDependencies": {
+    "nuxt": "^1.4.0"
+  }
+}

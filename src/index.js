@@ -8,4 +8,4 @@ const a = (
     </ul>
 )
 
-Dom.mount(Dom.createElement(a));
+render(a);
