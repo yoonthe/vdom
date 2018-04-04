@@ -1,26 +1,26 @@
 "use strict";
 
-var h = function h(type, props) {
-    for (var _len = arguments.length, children = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-        children[_key - 2] = arguments[_key];
-    }
+var _h = require("./vdom/h");
 
-    return { type: type, props: props, children: children };
-};
+var _h2 = _interopRequireDefault(_h);
 
-var a = h(
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var a = (0, _h2.default)(
     "ul",
     { "class": "test" },
-    h(
+    (0, _h2.default)(
         "li",
         null,
         "item1"
     ),
-    h(
+    (0, _h2.default)(
         "li",
         null,
         "item2"
     )
 );
 
-console.log(JSON.stringify(a));
+// render(a);
+// import Dom from './dom/dom-core';
+console.log(a);

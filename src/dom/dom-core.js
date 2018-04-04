@@ -1,6 +1,6 @@
 let hasDom = true;
 let $root = null;
-if(!(document && document.createElement)) {
+if(!document || !document.createElement) {
   console.error('Can\'t Find DOM! Please ensure you run project in browser');
   hasDom = false;
 } else {

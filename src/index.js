@@ -1,4 +1,4 @@
-import Dom from './dom/dom-core';
+// import Dom from './dom/dom-core';
 import h from './vdom/h';
 
 const a = (
@@ -8,4 +8,5 @@ const a = (
     </ul>
 )
 
-render(a);
+// render(a);
+console.log(a);

@@ -40,18 +40,24 @@ export default {
   },
   render(h) {
     console.log('render',this.items);
-    const div =h('div',[h('app-logo'),
-      h('ul',this.items.map(i => h('li',{key: i},i))),
+    const test = this.items.join('-');
+    const div =h('div',{
+      key: 'div',
+      attrs: {id: 'div'} 
+    },[h('app-logo', {props:{
+      test,
+    }}),
+      h('ul',this.items.map(i => h('li',{key: i, attrs: { id: i}},i))),
       h('button',{on: {click: this.itemChange}}, 'change')]);
     return this.test ? h('div',{style: {background: '#F00'}}, [div]) : div;
   },
   methods: {
     itemChange() {
       this.items = ['item2', 'item1'];
-      this.test =true;
+      // this.test =true;
       // setTimeout(() => {
-        this.items = ['item1', 'item2'];
-        this.test = false;
+        // this.items = ['item1', 'item2'];
+        // this.test = false;
       // },1);
     }
   }
