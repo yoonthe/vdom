@@ -7,5 +7,10 @@ const a = (
         <li>item2</li>
     </ul>
 )
-
-render(a);
+const b = (
+    <div>Test</div>
+)
+Dom.render(a);
+setTimeout(() => {
+  Dom.render(b);
+}, 3000);

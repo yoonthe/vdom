@@ -1,3 +1,6 @@
+/**
+ * @description 对于
+ */
 let hasDom = true;
 let $root = null;
 if(!(document && document.createElement)) {
@@ -29,19 +32,23 @@ const changed = (node1, node2) => {
 
 const updateElement = ($parent, newNode, oldNode, index = 0) => {
   if (!oldNode) {
+    // 添加新元素
     $parent.appendChild(
       createElement(newNode)
     );
   } else if (!newNode) {
+    // 移除元素
     $parent.removeChild(
       $parent.childNodes[index]
     );
   } else if (changed(newNode, oldNode)) {
+    // 替换元素
     $parent.replaceChild(
       createElement(newNode),
       $parent.childNodes[index]
     );
   } else if (newNode.type) {
+    // 对元素的下一级进行更新
     const newLength = newNode.children.length;
     const oldLength = oldNode.children.length;
     for (let i = 0; i < newLength || i < oldLength; i++) {
@@ -64,6 +71,7 @@ const mount = ($ele) => {
 let old = null;
 const render = (node) => {
   if (!old) {
+    old = node;
     mount(createElement(node));
   } else {
     updateElement($root, node, old);

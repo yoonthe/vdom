@@ -1,0 +1,1 @@
+import "./vdom/classes/Observer.test";
