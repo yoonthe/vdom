@@ -1,11 +1,25 @@
 <template>
-  <div class="VueToNuxtLogo">
-    <div class="Triangle Triangle--two"/>
-    <div class="Triangle Triangle--one"/>
-    <div class="Triangle Triangle--three"/>
-    <div class="Triangle Triangle--four"/>
+  <div>
+    <div class="VueToNuxtLogo">
+      <div class="Triangle Triangle--two"/>
+      <div class="Triangle Triangle--one"/>
+      <div class="Triangle Triangle--three"/>
+      <div class="Triangle Triangle--four"/>
+    </div>
+    <p>{{test}}</p>
   </div>
 </template>
+<script>
+export default {
+  props: {
+    test: {
+      type: String,
+      default: ''
+    }
+  }
+}
+</script>
+
 
 <style>
 .VueToNuxtLogo {

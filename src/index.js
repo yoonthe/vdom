@@ -1,4 +1,4 @@
-import Dom from './dom/dom-core';
+// import Dom from './dom/dom-core';
 import h from './vdom/h';
 
 const a = (
