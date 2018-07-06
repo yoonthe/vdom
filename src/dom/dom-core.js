@@ -122,6 +122,7 @@ export const mount = ($el, mount) => {
   if(isElement(t) && isElement($el)) {
     t.appendChild($el);
   }
+  return t;
 }
 let old = null;
 const render = (node) => {

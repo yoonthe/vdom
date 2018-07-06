@@ -55,6 +55,14 @@ export default class Model {
     Promise.resolve().then(() => this[update]());
   }
   [update]() {
+    const render = this[Render];
     console.log('begin update!');
+     // 渲染vnode
+     const newNode = render.create(this.render());
+     // destroyNode
+     this[mountNode].removeChild(this[node]);
+     // mountNode
+     render.mount(newNode, this[Mount]);
+     this[node] = newNode;
   }
 }
