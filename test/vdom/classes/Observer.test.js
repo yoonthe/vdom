@@ -11,6 +11,9 @@ const out = () => console.log(t.test.t, t.test.tt, t.d);
 out();
 
 t.test.t = 3;
+
+out();
+
 t.d = 4;
 
 out();
@@ -22,3 +25,15 @@ out();
 t.test.tt = 11;
 
 out();
+
+t.test.t = [1,2];
+
+out();
+
+t.test.t.push(33);
+
+out();
+
+const { test, d } = t;
+
+console.log(test,d);

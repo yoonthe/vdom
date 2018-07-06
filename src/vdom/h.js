@@ -1,4 +1,4 @@
-import { VNode } from './classes';
+import VNode from './classes/VNode';
 const h = (type, props, ...children) => {
   return new VNode(type, props, children);
 };

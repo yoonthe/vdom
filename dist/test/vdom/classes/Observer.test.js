@@ -22,6 +22,9 @@ var out = function out() {
 out();
 
 t.test.t = 3;
+
+out();
+
 t.d = 4;
 
 out();
@@ -33,3 +36,16 @@ out();
 t.test.tt = 11;
 
 out();
+
+t.test.t = [1, 2];
+
+out();
+
+t.test.t.push(33);
+
+out();
+var test = t.test,
+    d = t.d;
+
+
+console.log(test, d);

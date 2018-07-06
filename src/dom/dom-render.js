@@ -1,8 +1,11 @@
-import { RenderInterface } from '../vdom/interface';
+import RenderInterface from '../vdom/interface/RenderInterface';
+import { createElement, mount } from './dom-core';
 
 export default class DomRender extends RenderInterface {
-  create(node, parent) {
-    parent.appendChild(node);
+  create(vnode) {
+    return createElement(vnode);
   }
-  
+  mount(node, $mount) {
+    return mount(node, $mount);
+  }
 }

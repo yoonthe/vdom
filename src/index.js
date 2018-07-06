@@ -1,16 +1,29 @@
-// import Dom from './dom/dom-core';
+import DomRender from './dom/dom-render';
+import { setRender } from './vdom/config';
+import Model from './vdom/classes/Model';
 import h from './vdom/h';
 
-const a = (
-    <ul class="test">
-        <li>item1</li>
-        <li>item2</li>
-    </ul>
-)
-const b = (
-    <div>Test</div>
-)
-Dom.render(a);
-setTimeout(() => {
-  Dom.render(b);
-}, 3000);
+setRender(new DomRender());
+
+const state = {
+  title: 'Yoonthe\'s Show!'
+};
+
+const m = new Model({
+  state,
+  mount: '#root',
+  render() {
+    const { title } = this.state;
+    return (
+      <div>
+        <h1>{title}</h1>
+        <button onClick={this.change}>You should change!</button>
+      </div>
+    )
+  },
+  change() {
+    console.log(this, 'change');
+    this.state.title = 'Begin!';
+  }
+})
+

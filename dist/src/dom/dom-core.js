@@ -10,12 +10,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  * @description 对于
  */
 var hasDom = true;
-var $root = null;
-if (!(document && document.createElement)) {
+if (!document || !document.createElement) {
   console.error('Can\'t Find DOM! Please ensure you run project in browser');
   hasDom = false;
-} else {
-  $root = document.getElementById('root');
 }
 /**
  * @method createElement

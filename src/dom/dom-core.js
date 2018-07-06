@@ -1,28 +1,76 @@
+import { isString, isNull, isUndefined, isArray, isObject, isElement, isFunction } from 'lodash';
+import VNode from '../vdom/classes/VNode';
+
+const formatProp = obj => {
+  if(isFunction(obj)) {
+    return obj;
+  }
+  if(isArray(obj)) {
+    return obj.map(obj => formatProp(obj)).join(' ');
+  }
+  if(isObject(obj)) {
+    return Object.keys(obj).reduce((mol, k) => {
+      const val = obj[k];
+      if(isBoolean(val)) {
+        return `${mol} ${val ? k : '' }`;
+      }
+      return `${mol} ${k}:${val};`
+    }, '');
+  }
+  if(isNull(obj) || isUndefined(obj)) {
+    return '';
+  }
+  return toString.call(obj);
+}
 /**
  * @description 对于
  */
 let hasDom = true;
-let $root = null;
 if(!document || !document.createElement) {
   console.error('Can\'t Find DOM! Please ensure you run project in browser');
   hasDom = false;
-} else {
-  $root = document.getElementById('root');
 }
 /**
  * @method createElement
- * @param {VNode} node
+ * @param {VNode} vnode
  * @returns {HTMLElement} element
  */
-const createElement = (node) => {
+export const createElement = (vnode) => {
   if (!hasDom) return null;
-  if ( typeof node === 'string') {
-    return document.createTextNode(node);
-  } else {
-    const $el = document.createElement(node.type);
-    node.children.map(createElement).forEach($el.appendChild.bind($el));
+  if ( typeof vnode === 'string') {
+    return document.createTextNode(vnode);
+  } else if(vnode instanceof VNode) {
+    const { type, props, children } = vnode;
+    const $el = document.createElement(type);
+    setProps($el, props);
+    children.map(createElement).forEach($el.appendChild.bind($el));
     return $el;
   }
+  return null;
+}
+
+/**
+ * setProps
+ * @param {HTMLElement} node 
+ * @param {Object} props 
+ */
+const setProps = (node, props) => {
+  if (isNull(props) || isUndefined(props)) {
+    return;
+  }
+  const ks = Object.keys(props);
+  ks.forEach(key => {
+    const val = props[key];
+    if (isFunction(val)) {
+      node[key.toLowerCase()] = val;
+      return;
+    }
+    switch(key) {
+      // case 'className': 
+      default: 
+      node.setAttribute(key, formatProp(props[key]));
+    }
+  })
 }
 const changed = (node1, node2) => {
   return typeof node1 !== typeof node2 ||
@@ -63,10 +111,17 @@ const updateElement = ($parent, newNode, oldNode, index = 0) => {
 }
 /**
  * @method mount
- * @param {HTMLElement} $ele
+ * @param {HTMLElement} $el
+ * @param {String|HTMLElement} mount
  */
-const mount = ($ele) => {
-  $root.appendChild($ele);
+export const mount = ($el, mount) => {
+  let t = mount;
+  if(isString(t)) {
+    t = document.querySelector(t);
+  }
+  if(isElement(t) && isElement($el)) {
+    t.appendChild($el);
+  }
 }
 let old = null;
 const render = (node) => {
@@ -77,10 +132,3 @@ const render = (node) => {
     updateElement($root, node, old);
   }
 }
-
-export default {
-  createElement,
-  mount,
-  updateElement,
-  render,
-};
