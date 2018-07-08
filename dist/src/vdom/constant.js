@@ -7,10 +7,14 @@ exports.PatchTypeList = exports.PatchType = undefined;
 
 var _PatchType;
 
-var _lang = require('../utils/lang');
+var _lang = require('./lang');
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; } /**
+                                                                                                                                                                                                                   * @author Yoonthe
+                                                                                                                                                                                                                   * @description 定义各种 vdom 用 常量
+                                                                                                                                                                                                                   */
 
+// Patch
 /**
  * @description vdom diff 产出变更类型
  */

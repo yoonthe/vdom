@@ -1,7 +1,8 @@
 import RenderInterface from './interface/RenderInterface';
 
 const config = {
-  render: new RenderInterface()
+  render: new RenderInterface(),
+  debug: false,
 };
 /**
  * setRender
@@ -22,3 +23,7 @@ export const setRender = render => {
  * @returns {RenderInterface} render
  */
 export const getRender = () => config.render;
+
+export const enableDebug = () => config.debug = true;
+
+export const isDebug = () => config.debug;

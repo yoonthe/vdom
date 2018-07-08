@@ -1,6 +1,10 @@
-import { isString, isNull, isUndefined, isArray, isObject, isElement, isFunction } from 'lodash';
+import lang from '../utils/lang';
+import { throwError } from '../utils/handler';
 import VNode from '../vdom/classes/VNode';
+import { AllEvents } from './constant';
 
+const { isFunction, isArray, isObject, isUnval, isString, isNode, isNull, isBoolean } = lang;
+const empty = '';
 const formatProp = obj => {
   if(isFunction(obj)) {
     return obj;
@@ -17,52 +21,101 @@ const formatProp = obj => {
       return `${mol} ${k}:${val};`
     }, '');
   }
-  if(isNull(obj) || isUndefined(obj)) {
+  if(isUnval(obj)) {
     return '';
   }
   return toString.call(obj);
 }
 /**
- * @description 对于
+ * @description  各种监测
  */
+// 是否包含document
 let hasDom = true;
 if(!document || !document.createElement) {
-  console.error('Can\'t Find DOM! Please ensure you run project in browser');
+  console.error('Can\'t Find DOM! Please ensure you run this project in browser');
   hasDom = false;
 }
+
+// AddEventListener 是否支持options
+let passiveSupported = false;
+
+try {
+  var options = Object.defineProperty({}, "passive", {
+    get: function() {
+      passiveSupported = true;
+    }
+  });
+
+  window.addEventListener("test", null, options);
+} catch(err) {}
+
 /**
  * @method createElement
  * @param {VNode} vnode
  * @returns {HTMLElement} element
  */
 export const createElement = (vnode) => {
-  if (!hasDom) return null;
-  if ( typeof vnode === 'string') {
+  if (isUnval(vnode) || !hasDom) {
+    return null;
+  } else if ( isString(vnode)) {
     return document.createTextNode(vnode);
   } else if(vnode instanceof VNode) {
     const { type, props, children } = vnode;
     const $el = document.createElement(type);
     setProps($el, props);
-    children.map(createElement).forEach($el.appendChild.bind($el));
+    children.map(createElement).forEach(element => {
+      if (isNode(element)) {
+        $el.appendChild(element);
+      }
+    });
     return $el;
+  }
+  return document.createTextNode(vnode.toString());
+}
+
+const optionConnector = '_';
+const eventPropRegExp = new RegExp(`^on([A-Z][a-z]+)((${optionConnector}[a-z]+)*)$`);
+const convertOption = arr => {
+  const option = {};
+  arr.forEach(key => option[key] = true);
+  return option;
+}
+const execProp = key => {
+  const execs = eventPropRegExp.exec(key);
+  if (!isNull(execs)) {
+    const eventName = execs[1].toLowerCase();
+    if (AllEvents.indexOf(eventName) > -1) {
+      const options = passiveSupported ? convertOption(execs[2].slice(1).split('_')) : execs[2].indexOf('capture') > -1;
+      return { eventName, options };
+    } else {
+      throwError(new Error(`Eventname ${eventName} is't corrected or not be supported!`));
+    }
+  } else {
+    throwError(new Error(`EventListener's key can't be formated! Check the ${key}.`));
   }
   return null;
 }
-
 /**
  * setProps
  * @param {HTMLElement} node 
  * @param {Object} props 
+ * @param {Object} removeProps
  */
-const setProps = (node, props) => {
-  if (isNull(props) || isUndefined(props)) {
+export const setProps = (node, props, removeProps) => {
+  // 移除 props
+
+  // 添加 props
+  if (isUnval(props)) {
     return;
   }
   const ks = Object.keys(props);
   ks.forEach(key => {
     const val = props[key];
     if (isFunction(val)) {
-      node[key.toLowerCase()] = val;
+      const data = execProp(key);
+      if (!isNull(data)) {
+        node.addEventListener(data.eventName, val, data.options);
+      }
       return;
     }
     switch(key) {
@@ -119,7 +172,7 @@ export const mount = ($el, mount) => {
   if(isString(t)) {
     t = document.querySelector(t);
   }
-  if(isElement(t) && isElement($el)) {
+  if(isNode(t) && isNode($el)) {
     t.appendChild($el);
   }
   return t;

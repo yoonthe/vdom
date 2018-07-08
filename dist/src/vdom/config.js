@@ -5,10 +5,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getRender = exports.setRender = undefined;
 
-var _interface = require('../interface');
+var _RenderInterface = require('./interface/RenderInterface');
+
+var _RenderInterface2 = _interopRequireDefault(_RenderInterface);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var config = {
-  render: new _interface.RenderInterface()
+  render: new _RenderInterface2.default()
 };
 /**
  * setRender
@@ -16,7 +20,7 @@ var config = {
  * @returns {Boolean} scsFlag
  */
 var setRender = exports.setRender = function setRender(render) {
-  if (render instanceof _interface.RenderInterface) {
+  if (render instanceof _RenderInterface2.default) {
     config.render = render;
     return true;
   } else {

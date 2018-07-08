@@ -1,3 +1,4 @@
+import VNode from '../classes/VNode';
 /**
  * @class RenderInterface
  * @description 渲染接口，将VDom渲染为实际页面的方法，包含创建，删除，更新，以及挂载
@@ -27,21 +28,22 @@ export default class RenderInterface {
    * @param {Node} parent 
    * @param {Node} next 
    */
-  insert(node, parent, next = null) {
+  insert(node, parent, next) {
   }
   /**
-   * delete
+   * remove
    * @param {Node} node 
    * @param {Node} parent 
    */
-  delete(node, parent) {
+  remove(node, parent) {
   }
   /**
    * props
    * @param {Node} node 
-   * @param {Object} props 
+   * @param {Object} props
+   * @param {Object} removeProps
    */
-  props(node, props) {
+  props(node, props, removeProps) {
   }
   /**
    * replace
@@ -49,5 +51,20 @@ export default class RenderInterface {
    * @param {Node} old 
    */
   replace(node, old) {
+  }
+  /**
+   * replace
+   * @param {Node} node 
+   * @param {*} t 
+   */
+  text(node, t) {
+  }
+  /**
+   * getChildren
+   * @param {Node} node
+   * @returns {Node[]} children
+   */
+  getChildren(node) {
+    return [];
   }
 }

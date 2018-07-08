@@ -1,35 +1,64 @@
-import { isUndefined, isObject, isFunction } from 'lodash';
-const stateKey = Symbol('Observer#state');
+import lang from '../../utils/lang';
+
+const { isUndefined, isObject, isArray, isFunction, SymbolFactory, deepcopy } = lang;
+const obSymbol = SymbolFactory('Observer');
+const originKey = obSymbol('origin');
+
+const needOb = obj => isObject(obj) || isArray(obj);
+
+const ob = (obj,callback) => needOb(obj) ? new Observer(obj, callback) : obj;
+
+const proxyHandler = callback => ({
+  // get(target, key, receiver) {
+  //   let val = Reflect.get(target, key, receiver);
+  //   if (Observer[staticKey]) {
+  //     val = Object.freeze(deepcopy(val));
+  //   }
+  //   return val ;
+  // },
+  set(target, key, value, receiver) {
+    // TODO: 回调
+    if (isFunction(callback)) callback({ target, key, value, receiver });
+    target[originKey][key] = value;
+    return Reflect.set(target, key, ob(value, callback), receiver);
+  },
+});
+
 export default class Observer {
+  /**
+   * @constructor
+   * @param {Object|Array} state 
+   * @param {Function} callback 
+   */
   constructor(state, callback) {
-    if (isObject(state) && !isFunction(state)) {
-      this[stateKey] = state;
-      return new Proxy(this, {
-        get(target, key, receiver) {
-          if ( key === stateKey) {
-            return this[stateKey];
-          }
-          let val = Reflect.get(target[stateKey], key, receiver);
-          if(isObject(val) && !isFunction(val) && !(val instanceof Observer)) {
-            val = new Observer(val, callback);
-            target[stateKey][key] = val;
-            // Reflect.set(target[stateKey], key, val, receiver)
-          }
-          return val ;
-        },
-        set(target, key, value, receiver) {
-          // TODO: 回调
-          let val = value;
-          if (isFunction(callback)) callback();
-          if(isObject(val) && !isFunction(val)) {
-            val = new Observer(val, callback);
-          }
-          target[stateKey][key] = val;
-          return true;
-          // return Reflect.set(target[stateKey], key, val, receiver);
-        },
-      });
+    this[originKey] = state;
+    if (isObject(state)) {
+      Object.keys(state).forEach(key => {
+        this[key] = ob(state[key], callback);
+      })
     }
-    return state;
+    if (isArray(state)) {
+      return new ArrayObserver(state, callback);
+    }
+    return new Proxy(this, proxyHandler(callback));
+  }
+  getStatic() {
+    return Object.freeze(deepcopy(this[originKey]))
   }
 }
+
+export const ArrayObserver = class ArrayObserver extends Array {
+  constructor(state, callback) {
+    super();
+    this[originKey] = state;
+    state.forEach(t => {
+      this.push(ob(t, callback));
+    });
+    return new Proxy(this, proxyHandler(callback));
+  }
+  getStatic() {
+    return Object.freeze(deepcopy(this[originKey]))
+  }
+}
+
+Observer.ArrayObserver = ArrayObserver;
