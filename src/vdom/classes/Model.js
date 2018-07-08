@@ -2,7 +2,7 @@ import Observer from './Observer';
 import Patch from './Patch';
 import lang from '../../utils/lang';
 import { getRender, isDebug } from '../config';
-import { throwError, handleErrors } from '../../utils/handler';
+import { throwError, handleErrors, setTime } from '../../utils/handler';
 import diff from '../diff';
 
 const { SymbolFactory, isFunction, isNull } = lang;
@@ -115,6 +115,7 @@ export default class Model {
   [updateFn]() {
     if(isDebug()) {
       console.log('begin update!');
+      setTime();
     }
     // 将上次结果变更
     this[oldVNode] = this[vnode];
@@ -137,11 +138,18 @@ export default class Model {
   //   Promise.resolve().then(this[patchFn])
   // }
   [patchFn]() {
+    if(isDebug()) {
+      console.log('-------------- Update ---------------');
+      console.log(JSON.stringify(this[patches]));
+    }
     this[patches].forEach(patch => {
       if (isFunction(patch.apply)) {
         patch.apply();
       }
     })
+    if(isDebug()) {
+      setTime();
+    }
   }
   [renderFn]() {
     this[staticStateFlag] = true;

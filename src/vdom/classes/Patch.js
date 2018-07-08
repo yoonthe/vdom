@@ -10,7 +10,7 @@ let Render = new RenderInterface();
 export default class Patch {
   constructor(type, node, ...args) {
     if (PatchTypeList.indexOf(type) === -1) {
-      throw new Error('Patch should use vdom/constants/PatchType Symbol!');
+      throw new Error('Patch should in vdom/constants/PatchType!');
     }
     this.type = type;
     this.node = node;
