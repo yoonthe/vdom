@@ -55,7 +55,7 @@ const lang =  ObjectTypes.reduce((mol,t) => {
     deepEqual,
     isNode: obj => obj instanceof Node,
     isUnval: obj => lang.isUndefined(obj) || lang.isNull(obj),
-    isEmpty: obj => isUnval(obj) || obj === '' || (lang.isArray(obj) && obj.length === 0)
+    isEmpty: obj => lang.isUnval(obj) || obj === '' || (lang.isArray(obj) && obj.length === 0) || Object.is(obj, NaN),
 });
 
 export default lang;

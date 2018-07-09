@@ -2,6 +2,7 @@ import lang from '../utils/lang';
 import { throwError } from '../utils/handler';
 import VNode from '../vdom/classes/VNode';
 import { AllEvents } from './constant';
+// TODO: 事件代理 delegate
 
 const { isFunction, isArray, isObject, isUnval, isString, isNode, isNull, isBoolean } = lang;
 const empty = '';

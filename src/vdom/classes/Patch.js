@@ -8,18 +8,17 @@ const { isFunction, isNode } = lang;
 let Render = new RenderInterface();
 
 export default class Patch {
-  constructor(type, node, ...args) {
+  constructor(type, ...args) {
     if (PatchTypeList.indexOf(type) === -1) {
       throw new Error('Patch should in vdom/constants/PatchType!');
     }
     this.type = type;
-    this.node = node;
-    this.data = args;
+    this.args = args;
   }
   apply() {
     const method = Render[PatchType[this.type]];
     if (isFunction(method)) {
-      method(isNode(this.node) ? this.node : Render.create(this.node), ...this.data);
+      method(...this.args);
     }
   }
 }

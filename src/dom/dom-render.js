@@ -11,12 +11,12 @@ export default class DomRender extends RenderInterface {
   mount(node, $mount) {
     return mount(node, $mount);
   }
-  insert(node, parent, next) {
-    parent.insertBefore(node, next);
+  insert(vnode, parent, next = null) {
+    parent.insertBefore(this.create(vnode), next);
   }
-  replace(node, old) {
+  replace(vnode, old) {
     if(isNode(old.parentNode)) {
-      old.parentNode.replaceChild(node, old);
+      old.parentNode.replaceChild(this.create(vnode), old);
     }
   }
   remove(node, parent) {

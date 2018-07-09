@@ -23,12 +23,12 @@ export default class RenderInterface {
     return null;
   }
   /**
-   * insert
-   * @param {Node} node 
+   * insert 
+   * @param {VNode} vnode 
    * @param {Node} parent 
    * @param {Node} next 
    */
-  insert(node, parent, next) {
+  insert(vnode, parent, next) {
   }
   /**
    * remove
@@ -47,10 +47,10 @@ export default class RenderInterface {
   }
   /**
    * replace
-   * @param {Node} node 
+   * @param {VNode} vnode 
    * @param {Node} old 
    */
-  replace(node, old) {
+  replace(vnode, old) {
   }
   /**
    * replace
@@ -58,6 +58,15 @@ export default class RenderInterface {
    * @param {*} t 
    */
   text(node, t) {
+  }
+  /**
+   * sort
+   * @param {Node} node 
+   * @param {Node} parent 
+   * @param {Node} next 
+   */
+  sort(node, parent, next) {
+
   }
   /**
    * getChildren
