@@ -25,7 +25,7 @@ const formatProp = obj => {
   if(isUnval(obj)) {
     return '';
   }
-  return toString.call(obj);
+  return obj.toString();
 }
 /**
  * @description  各种监测
@@ -97,6 +97,30 @@ const execProp = key => {
   return null;
 }
 /**
+ * setProp
+ * @param {Node} node 
+ * @param {String} key 
+ * @param {String} val 
+ * @param {Boolean} removeFlag
+ */
+const setProp = (node, key, val, removeFlag = false) => {
+  switch(key) {
+    case 'className': 
+    // 设置class
+    if (removeFlag) {
+      node[key] = empty;
+    } else {
+      node[key] = formatProp(val);
+    }
+    default: 
+    if (removeFlag) {
+      node.removeAttribute(key);
+    } else {
+      node.setAttribute(key, formatProp(val));
+    }
+  }
+}
+/**
  * setProps
  * @param {HTMLElement} node 
  * @param {Object} props 
@@ -104,7 +128,20 @@ const execProp = key => {
  */
 export const setProps = (node, props, removeProps) => {
   // 移除 props
-
+  if (!isUnval(removeProps)) {
+    const rmKs = Object.keys(removeProps);
+    rmKs.forEach(key => {
+      const rmVal = removeProps[key];
+      if (isFunction(rmVal)) {
+        const data = execProp(key);
+        if (!isNull(data)) {
+          node.removeEventListener(data.eventName, val, data.options);
+        }
+        return;
+      }
+      setProp()
+    })
+  }
   // 添加 props
   if (isUnval(props)) {
     return;
@@ -119,11 +156,7 @@ export const setProps = (node, props, removeProps) => {
       }
       return;
     }
-    switch(key) {
-      // case 'className': 
-      default: 
-      node.setAttribute(key, formatProp(props[key]));
-    }
+    setProp(node, key, val);
   })
 }
 const changed = (node1, node2) => {

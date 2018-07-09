@@ -15,6 +15,11 @@ module.exports = {
         test: /\.jsx?$/,
         include: [path.resolve(__dirname, "src")],
         loader: 'babel-loader',                
+      },
+      {
+        test: /\.less$/,
+        include: [path.resolve(__dirname, "src")],
+        loaders: ['style-loader','css-loader?modules&localIdentName=[name]__[local]-[hash:base64:5]','less-loader']
       }
     ]
   },
