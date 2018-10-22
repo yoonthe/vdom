@@ -5,11 +5,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ArrayObserver = undefined;
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _lang = require('../../utils/lang');
 
 var _lang2 = _interopRequireDefault(_lang);
-
-var _fs = require('fs');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23,10 +23,10 @@ var isUndefined = _lang2.default.isUndefined,
     isObject = _lang2.default.isObject,
     isArray = _lang2.default.isArray,
     isFunction = _lang2.default.isFunction,
-    SymbolFactory = _lang2.default.SymbolFactory;
+    SymbolFactory = _lang2.default.SymbolFactory,
+    deepcopy = _lang2.default.deepcopy;
 
 var obSymbol = SymbolFactory('Observer');
-var stateKey = obSymbol('state');
 var originKey = obSymbol('origin');
 
 var needOb = function needOb(obj) {
@@ -41,11 +41,9 @@ var proxyHandler = function proxyHandler(callback) {
   return {
     // get(target, key, receiver) {
     //   let val = Reflect.get(target, key, receiver);
-    //   // if(isObject(val) && !isFunction(val) && !(val instanceof Observer)) {
-    //   //   val = new Observer(val, callback);
-    //   //   target[key] = val;
-    //   //   // Reflect.set(target[stateKey], key, val, receiver)
-    //   // }
+    //   if (Observer[staticKey]) {
+    //     val = Object.freeze(deepcopy(val));
+    //   }
     //   return val ;
     // },
     set: function set(target, key, value, receiver) {
@@ -57,28 +55,38 @@ var proxyHandler = function proxyHandler(callback) {
   };
 };
 
-var Observer =
-/**
- * @constructor
- * @param {Object|Array} state 
- * @param {Function} callback 
- */
-function Observer(state, callback) {
-  var _this = this;
+var Observer = function () {
+  /**
+   * @constructor
+   * @param {Object|Array} state 
+   * @param {Function} callback 
+   */
+  function Observer(state, callback) {
+    var _this = this;
 
-  _classCallCheck(this, Observer);
+    _classCallCheck(this, Observer);
 
-  this[originKey] = state;
-  if (isObject(state)) {
-    Object.keys(state).forEach(function (key) {
-      _this[key] = ob(state[key], callback);
-    });
+    this[originKey] = state;
+    if (isObject(state)) {
+      Object.keys(state).forEach(function (key) {
+        _this[key] = ob(state[key], callback);
+      });
+    }
+    if (isArray(state)) {
+      return new ArrayObserver(state, callback);
+    }
+    return new Proxy(this, proxyHandler(callback));
   }
-  if (isArray(state)) {
-    return new ArrayObserver(state, callback);
-  }
-  return new Proxy(this, proxyHandler(callback));
-};
+
+  _createClass(Observer, [{
+    key: 'getStatic',
+    value: function getStatic() {
+      return Object.freeze(deepcopy(this[originKey]));
+    }
+  }]);
+
+  return Observer;
+}();
 
 exports.default = Observer;
 var ArrayObserver = exports.ArrayObserver = function (_Array) {
@@ -98,5 +106,14 @@ var ArrayObserver = exports.ArrayObserver = function (_Array) {
     return _ret = new Proxy(_this2, proxyHandler(callback)), _possibleConstructorReturn(_this2, _ret);
   }
 
+  _createClass(ArrayObserver, [{
+    key: 'getStatic',
+    value: function getStatic() {
+      return Object.freeze(deepcopy(this[originKey]));
+    }
+  }]);
+
   return ArrayObserver;
 }(Array);
+
+Observer.ArrayObserver = ArrayObserver;

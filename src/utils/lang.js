@@ -45,6 +45,12 @@ export const deepEqual = (obj, cmp) => {
     return Object.is(obj, cmp);
 }
 
+/**
+ * 解除一层 []
+ * @param {Array} arr 
+ */
+export const flatten = arr => lang.isArray(arr) ? arr.reduce((mol, t) => mol.concat(t), []) : [];
+
 const lang =  ObjectTypes.reduce((mol,t) => {
     mol[`is${t}`] = obj => getType(obj) === t;
     return mol;
@@ -53,6 +59,7 @@ const lang =  ObjectTypes.reduce((mol,t) => {
     SymbolFactory,
     deepcopy,
     deepEqual,
+    flatten,
     isNode: obj => obj instanceof Node,
     isUnval: obj => lang.isUndefined(obj) || lang.isNull(obj),
     isEmpty: obj => lang.isUnval(obj) || obj === '' || (lang.isArray(obj) && obj.length === 0) || Object.is(obj, NaN),

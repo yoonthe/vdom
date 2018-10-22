@@ -10,4 +10,4 @@ export const PatchType = Types.reduce((mol, t) => {
   mol[t] = t.toLowerCase();
   return mol;
 }, {});
-export const PatchTypeList = Object.keys(PatchType);
+export const PatchTypeList = Types;

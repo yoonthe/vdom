@@ -30,6 +30,9 @@ export default class DomRender extends RenderInterface {
       node.textContent = t.toString();
     }
   }
+  sort(node, parent, next) {
+    parent.insertBefore(node, next);
+  }
   getChildren(node) {
     return node.hasChildNodes() ?  Array.from(node.childNodes) : [];
   }

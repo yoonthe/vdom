@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.mount = exports.createElement = undefined;
+exports.mount = exports.setProps = exports.createElement = undefined;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
@@ -21,12 +21,14 @@ var _constant = require('./constant');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// TODO: 事件代理 delegate
+
 var isFunction = _lang2.default.isFunction,
     isArray = _lang2.default.isArray,
     isObject = _lang2.default.isObject,
     isUnval = _lang2.default.isUnval,
     isString = _lang2.default.isString,
-    isElement = _lang2.default.isElement,
+    isNode = _lang2.default.isNode,
     isNull = _lang2.default.isNull,
     isBoolean = _lang2.default.isBoolean;
 
@@ -52,7 +54,7 @@ var formatProp = function formatProp(obj) {
   if (isUnval(obj)) {
     return '';
   }
-  return toString.call(obj);
+  return obj.toString();
 };
 /**
  * @description  各种监测
@@ -95,7 +97,7 @@ var createElement = exports.createElement = function createElement(vnode) {
     var $el = document.createElement(type);
     setProps($el, props);
     children.map(createElement).forEach(function (element) {
-      if (element instanceof Node) {
+      if (isNode(element)) {
         $el.appendChild(element);
       }
     });
@@ -113,16 +115,70 @@ var convertOption = function convertOption(arr) {
   });
   return option;
 };
-// const eventWrapper = (target, event, listener, options) => {
+var execProp = function execProp(key) {
+  var execs = eventPropRegExp.exec(key);
+  if (!isNull(execs)) {
+    var eventName = execs[1].toLowerCase();
+    if (_constant.AllEvents.indexOf(eventName) > -1) {
+      var _options = passiveSupported ? convertOption(execs[2].slice(1).split('_')) : execs[2].indexOf('capture') > -1;
+      return { eventName: eventName, options: _options };
+    } else {
+      (0, _handler.throwError)(new Error('Eventname ' + eventName + ' is\'t corrected or not be supported!'));
+    }
+  } else {
+    (0, _handler.throwError)(new Error('EventListener\'s key can\'t be formated! Check the ' + key + '.'));
+  }
+  return null;
+};
+/**
+ * setProp
+ * @param {Node} node 
+ * @param {String} key 
+ * @param {String} val 
+ * @param {Boolean} removeFlag
+ */
+var setProp = function setProp(node, key, val) {
+  var removeFlag = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
-// }
+  switch (key) {
+    case 'className':
+      // 设置class
+      if (removeFlag) {
+        node[key] = empty;
+      } else {
+        node[key] = formatProp(val);
+      }
+    default:
+      if (removeFlag) {
+        node.removeAttribute(key);
+      } else {
+        node.setAttribute(key, formatProp(val));
+      }
+  }
+};
 /**
  * setProps
  * @param {HTMLElement} node 
  * @param {Object} props 
- * @param {Object} oldProps
+ * @param {Object} removeProps
  */
-var setProps = function setProps(node, props, oldProps) {
+var setProps = exports.setProps = function setProps(node, props, removeProps) {
+  // 移除 props
+  if (!isUnval(removeProps)) {
+    var rmKs = Object.keys(removeProps);
+    rmKs.forEach(function (key) {
+      var rmVal = removeProps[key];
+      if (isFunction(rmVal)) {
+        var data = execProp(key);
+        if (!isNull(data)) {
+          node.removeEventListener(data.eventName, val, data.options);
+        }
+        return;
+      }
+      setProp();
+    });
+  }
+  // 添加 props
   if (isUnval(props)) {
     return;
   }
@@ -130,25 +186,13 @@ var setProps = function setProps(node, props, oldProps) {
   ks.forEach(function (key) {
     var val = props[key];
     if (isFunction(val)) {
-      var execProp = eventPropRegExp.exec(key);
-      if (!isNull(execProp)) {
-        var eventName = execProp[1].toLowerCase();
-        if (_constant.AllEvents.indexOf(eventName) > -1) {
-          var _options = passiveSupported ? convertOption(execProp[2].slice(1).split('_')) : execProp[2].indexOf('capture') > -1;
-          node.addEventListener(eventName, val, _options);
-          return;
-        } else {
-          return (0, _handler.throwError)(new Error('Eventname ' + eventName + ' is\'t corrected or not be supported!'));
-        }
-      } else {
-        return (0, _handler.throwError)(new Error('EventListener\'s key can\'t be formated! Check the ' + key + '.'));
+      var data = execProp(key);
+      if (!isNull(data)) {
+        node.addEventListener(data.eventName, val, data.options);
       }
+      return;
     }
-    switch (key) {
-      // case 'className': 
-      default:
-        node.setAttribute(key, formatProp(props[key]));
-    }
+    setProp(node, key, val);
   });
 };
 var changed = function changed(node1, node2) {
@@ -186,7 +230,7 @@ var mount = exports.mount = function mount($el, _mount) {
   if (isString(t)) {
     t = document.querySelector(t);
   }
-  if (isElement(t) && isElement($el)) {
+  if (isNode(t) && isNode($el)) {
     t.appendChild($el);
   }
   return t;

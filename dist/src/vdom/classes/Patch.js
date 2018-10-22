@@ -8,36 +8,53 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _constant = require('../constant');
 
-var _interface = require('../interface');
+var _RenderInterface = require('../interface/RenderInterface');
+
+var _RenderInterface2 = _interopRequireDefault(_RenderInterface);
+
+var _lang = require('../../utils/lang');
+
+var _lang2 = _interopRequireDefault(_lang);
+
+var _VNode = require('./VNode');
+
+var _VNode2 = _interopRequireDefault(_VNode);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var isFunction = _lang2.default.isFunction,
+    isNode = _lang2.default.isNode;
+
+
+var Render = new _RenderInterface2.default();
+
 var Patch = function () {
-  function Patch(type, node, data) {
+  function Patch(type) {
     _classCallCheck(this, Patch);
 
     if (_constant.PatchTypeList.indexOf(type) === -1) {
-      throw new Error('Patch should use vdom/constants/PatchType Symbol!');
+      throw new Error('Patch should in vdom/constants/PatchType!');
     }
     this.type = type;
-    this.node = node;
-    this.data = data;
-    this.render = null;
+
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    this.args = args;
   }
 
   _createClass(Patch, [{
-    key: 'setRender',
-    value: function setRender(render) {
-      if (render instanceof _interface.RenderInterface) {
-        this.render = render;
-      } else {
-        throw new Error('Render must extend RenderInterface!');
-      }
-    }
-  }, {
     key: 'apply',
     value: function apply() {
-      this.render[_constant.PatchType[this.type]](this.node, this.data);
+      var method = Render[_constant.PatchType[this.type]];
+      if (isFunction(method)) {
+        method.apply(undefined, _toConsumableArray(this.args));
+      }
     }
   }]);
 
@@ -45,3 +62,24 @@ var Patch = function () {
 }();
 
 exports.default = Patch;
+
+_constant.PatchTypeList.forEach(function (type) {
+  Patch['' + _constant.PatchType[type]] = function () {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    return new (Function.prototype.bind.apply(Patch, [null].concat([type], args)))();
+  };
+});
+/**
+ * Patch setRender
+ * @param {RenderInterface} render 
+ */
+Patch.setRender = function (render) {
+  if (render instanceof _RenderInterface2.default) {
+    Render = render;
+  } else {
+    throw new Error('[Patch] Render must extend RenderInterface!');
+  }
+};

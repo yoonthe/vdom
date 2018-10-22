@@ -17,6 +17,20 @@ const state = {
   styles: { color: 'red' },
   t: null,
   flag: true,
+  list: [
+    {
+      key: 't1',
+      label: 'test1',
+    },
+    {
+      key: 't2',
+      label: 'test2',
+    },
+    {
+      key: 't3',
+      label: 'test3',
+    },
+  ]
 };
 
 const m = new Model({
@@ -24,10 +38,9 @@ const m = new Model({
   mount: '#root',
   render() {
     const { title, clickTime, styles, t, flag, list } = this.state;
-    const l = list.map(v => {
-      return (
-        <div key={v.key}>{v.label}</div>
-      )    })
+    const l = list.map(v => (
+        <li key={v.key}>{v.label}</li>
+      ))
     return (
       <div>
         <h1 className={flag ? css.title: ''}>{title}</h1>
@@ -35,6 +48,7 @@ const m = new Model({
         <p style={styles}>click: {clickTime}</p>
         <div></div>
         <div>{t}</div>
+        <ul>{l}</ul>
       </div>
     )
   },
@@ -43,9 +57,10 @@ const m = new Model({
     this.state.title = 'Begin!';
     this.state.flag = !this.state.flag;
     this.state.clickTime = this.state.clickTime + 1;
-    setTimeout(() => {
-      this.state.styles.color = 'green'
-    }, 3000);
+    this.state.list.splice(1,0,this.state.list.splice(0,1)[0]);
+    // setTimeout(() => {
+      this.state.styles.color = 'green';
+    // }, 3000);
   }
 })
 

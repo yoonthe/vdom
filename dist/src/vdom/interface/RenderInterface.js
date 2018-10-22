@@ -1,10 +1,16 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _VNode = require('../classes/VNode');
+
+var _VNode2 = _interopRequireDefault(_VNode);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -19,7 +25,7 @@ var RenderInterface = function () {
   }
 
   _createClass(RenderInterface, [{
-    key: "create",
+    key: 'create',
 
     /**
      * create
@@ -37,49 +43,78 @@ var RenderInterface = function () {
      */
 
   }, {
-    key: "mount",
+    key: 'mount',
     value: function mount(node, _mount) {
       return null;
     }
     /**
-     * insert
+     * insert 
+     * @param {VNode} vnode 
+     * @param {Node} parent 
+     * @param {Node} next 
+     */
+
+  }, {
+    key: 'insert',
+    value: function insert(vnode, parent, next) {}
+    /**
+     * remove
+     * @param {Node} node 
+     * @param {Node} parent 
+     */
+
+  }, {
+    key: 'remove',
+    value: function remove(node, parent) {}
+    /**
+     * props
+     * @param {Node} node 
+     * @param {Object} props
+     * @param {Object} removeProps
+     */
+
+  }, {
+    key: 'props',
+    value: function props(node, _props, removeProps) {}
+    /**
+     * replace
+     * @param {VNode} vnode 
+     * @param {Node} old 
+     */
+
+  }, {
+    key: 'replace',
+    value: function replace(vnode, old) {}
+    /**
+     * replace
+     * @param {Node} node 
+     * @param {*} t 
+     */
+
+  }, {
+    key: 'text',
+    value: function text(node, t) {}
+    /**
+     * sort
      * @param {Node} node 
      * @param {Node} parent 
      * @param {Node} next 
      */
 
   }, {
-    key: "insert",
-    value: function insert(node, parent) {
-      var next = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    key: 'sort',
+    value: function sort(node, parent, next) {}
+    /**
+     * getChildren
+     * @param {Node} node
+     * @returns {Node[]} children
+     */
+
+  }, {
+    key: 'getChildren',
+    value: function getChildren(node) {
+      return [];
     }
-    /**
-     * delete
-     * @param {Node} node 
-     * @param {Node} parent 
-     */
-
-  }, {
-    key: "delete",
-    value: function _delete(node, parent) {}
-    /**
-     * props
-     * @param {Node} node 
-     * @param {Object} props 
-     */
-
-  }, {
-    key: "props",
-    value: function props(node, _props) {}
-    /**
-     * replace
-     * @param {Node} node 
-     * @param {Node} old 
-     */
-
-  }, {
-    key: "replace",
-    value: function replace(node, old) {}
   }]);
 
   return RenderInterface;

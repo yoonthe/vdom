@@ -140,7 +140,7 @@ export default class Model {
   [patchFn]() {
     if(isDebug()) {
       console.log('-------------- Update ---------------');
-      console.log(JSON.stringify(this[patches]));
+      this[patches].map((patch, index) => console.log(`Step ${index +1}:`, patch.toString()));
     }
     this[patches].forEach(patch => {
       if (isFunction(patch.apply)) {

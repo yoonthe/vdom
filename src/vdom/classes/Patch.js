@@ -1,9 +1,10 @@
 import { PatchType, PatchTypeList } from '../constant';
 import RenderInterface from '../interface/RenderInterface';
 import lang from '../../utils/lang';
-import VNode from './VNode';
+import { patchToString } from '../utils/toString';
+// import VNode from './VNode';
 
-const { isFunction, isNode } = lang;
+const { isFunction } = lang;
 
 let Render = new RenderInterface();
 
@@ -20,6 +21,9 @@ export default class Patch {
     if (isFunction(method)) {
       method(...this.args);
     }
+  }
+  toString() {
+    return patchToString(this);
   }
 }
 PatchTypeList.forEach(type => {

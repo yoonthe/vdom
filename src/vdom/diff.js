@@ -139,11 +139,16 @@ const filtChildren = children => {
  * vnodeFindIndexFactory
  * @param {VNode[]} list 
  * @param {VNode[]} oldList 
- * @param {Node[]} nodeList 
+ * @param {VNode[]} nodeList
+ * @param {Node} parent
  * @param {RenderInterface} render
  * @returns {Function} vnodeFindIndex
  */
-const vnodeFindIndexFactory = (list, oldList, nodeList, render) => {
+const vnodeFindIndexFactory = (list, oldList, nodeList, parent, render) => {
+   // TODO: 这里需要观察一下， 如果oldChildren 包含 null/undefined, 则 oldChildren 的length 将大于childNodes的length
+   if (oldList.length !== nodeList.length) {
+    throwError(new Error('[Diff] oldChildren 与 childNodes 不等长'));
+  }
   /**
    * vnodeFindIndex
    * 从oldList 中找到第一个与 list[i] 同源的, 并生成更新
@@ -159,7 +164,7 @@ const vnodeFindIndexFactory = (list, oldList, nodeList, render) => {
     // 是否是全相等的文本节点
     let isTextEqual = false;
     // 插入到当前node指针位置前
-    const next = nodeList[k];
+    const next = nodeList[k] || null;
     const findIndexRange = findIndexRangeFactory(oldList, k, t);
     // 查找 index
     if (!isV) {
@@ -222,11 +227,7 @@ const vnodeFindIndexFactory = (list, oldList, nodeList, render) => {
 //   const oldList = filtChildren(oldChildren);
 //   const nodeList = render.getChildren(parent);
 //   let patches = [];
-//   const vnodeFindIndex = vnodeFindIndexFactory(list, oldList, nodeList, render);
-//   // TODO: 这里需要观察一下， 如果oldChildren 包含 null/undefined, 则 oldChildren 的length 将大于childNodes的length
-//   if (oldList.length !== nodeList.length) {
-//     throwError(new Error('[Diff] oldChildren 与 childNodes 不等长'));
-//   }
+//   const vnodeFindIndex = vnodeFindIndexFactory(list, oldList, nodeList, parent, render);
 //   let i = 0;
 //   // 遍历直至children遍历完， childNodes如有剩余全部删除
 //   while(i < list.length) {
@@ -308,11 +309,8 @@ const diffChildrenNB = (children, oldChildren, parent, render) => {
   const nodeList = render.getChildren(parent);
   let patches = [];
   const vnodeEqualDo = vnodeEqualDoFactory(list, oldList, nodeList, render);
-  const vnodeFindIndex = vnodeFindIndexFactory(list, oldList, nodeList, render);
-  // TODO: 这里需要观察一下， 如果oldChildren 包含 null/undefined, 则 oldChildren 的length 将大于childNodes的length
-  if (oldList.length !== nodeList.length) {
-    throwError(new Error('[Diff] oldChildren 与 childNodes 不等长'));
-  }
+  const vnodeFindIndex = vnodeFindIndexFactory(list, oldList, nodeList, parent, render);
+ 
   let i = 0;
   let j = list.length - 1;
   let k = 0;
