@@ -1,3 +1,6 @@
+import lang from '../utils/lang';
+
+const { isEmpty } = lang;
 /**
  * 
  * @param {Element} node 
@@ -8,7 +11,16 @@ export const nodeToString = node => {
     return `<Text:${node.textContent}>`;
   }
   if (node instanceof Node) {
-    return `<${node.tagName}${node.id ? `#${node.id}` : ''}${Array.from(node.classList || []).map(className => `.${className}`).join('')}>`;
+    const key = node.getAttribute('key');
+    const { id } = node;
+    let t = '';
+    if (!isEmpty(key)) {
+      t += `@${key}`;
+    }
+    if (!isEmpty(id)) {
+      t += `#${id}`;
+    }
+    return `<${node.tagName}${t}${Array.from(node.classList || []).map(className => `.${className}`).join('')}>`;
   }
   return node;
 }

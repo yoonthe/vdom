@@ -19,7 +19,7 @@ export default class Patch {
   apply() {
     const method = Render[PatchType[this.type]];
     if (isFunction(method)) {
-      method(...this.args);
+      method.call(Render, ...this.args);
     }
   }
   toString() {

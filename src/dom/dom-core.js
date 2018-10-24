@@ -56,7 +56,7 @@ try {
  * @returns {HTMLElement} element
  */
 export const createElement = (vnode) => {
-  if (isUnval(vnode) || !hasDom) {
+  if (isUnval(vnode) || vnode === false || !hasDom) {
     return null;
   } else if ( isString(vnode)) {
     return document.createTextNode(vnode);
@@ -139,7 +139,7 @@ export const setProps = (node, props, removeProps) => {
         }
         return;
       }
-      setProp()
+      setProp(node, key, rmVal, true);
     })
   }
   // 添加 props

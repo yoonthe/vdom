@@ -128,7 +128,7 @@ const getKeyVnodeIndex = key => v => Object.is(getVnodeKey(v), key);
 const filtChildren = children => {
   const res = [];
   children.forEach(child => {
-    if(!isUnval(child)) {
+    if(!isUnval(child) && child !== false ) {
       res.push(child);
     }
   });
@@ -346,7 +346,7 @@ const diffChildrenNB = (children, oldChildren, parent, render) => {
     }
   }
   // old 未遍历的全部删除
-  return patches.concat(nodeList.slice(k, t).map(node => Patch.remove(node, parent)));
+  return patches.concat(nodeList.slice(i, t + 1).map(node => Patch.remove(node, parent)));
 }
 
 /**

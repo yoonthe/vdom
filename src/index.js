@@ -49,6 +49,7 @@ const m = new Model({
         <div></div>
         <div>{t}</div>
         <ul>{l}</ul>
+        {flag && <div>123</div>}
       </div>
     )
   },
